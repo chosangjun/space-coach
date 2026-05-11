@@ -224,12 +224,12 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => openImageModal(previewUrl, "업로드 이미지")}
-                className="group w-full cursor-pointer overflow-hidden transition-transform duration-300 ease-out hover:scale-[1.015] active:scale-[0.99]"
+                className="group flex h-64 max-h-[62vh] w-full cursor-pointer items-center justify-center overflow-hidden transition-transform duration-300 ease-out hover:scale-[1.015] active:scale-[0.99]"
               >
                 <img
                   src={previewUrl}
                   alt="업로드한 사진"
-                  className="h-64 max-h-[62vh] w-full object-contain transition-transform duration-300 ease-out group-hover:scale-[1.02]"
+                  className="h-full w-full object-contain object-center transition-transform duration-300 ease-out group-hover:scale-[1.02]"
                 />
               </button>
             ) : (
