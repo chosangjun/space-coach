@@ -395,7 +395,7 @@ export default function Home() {
               공간 분석을 시작하시겠습니까?
             </h3>
             <p className="mt-2 text-xs text-slate-500">
-              시작하기를 누르면 AI가 배치 추천을 분석합니다.
+              시작하기를 누르면 공간을 분석해 정리 추천을 안내해드려요.
             </p>
             <div className="mt-4 grid grid-cols-2 gap-2">
               <button
