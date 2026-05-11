@@ -12,6 +12,9 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const unrelatedAnswer =
+  "이 사진 기준으로는 정리나 배치 관련 질문을 해주시면 더 정확히 도와드릴 수 있어요.";
+
 export async function POST(request: Request) {
   if (!process.env.OPENAI_API_KEY) {
     return NextResponse.json(
@@ -65,6 +68,9 @@ export async function POST(request: Request) {
 - 사용자가 바로 실행할 수 있게 구체적으로 답하세요.
 - 보이지 않는 물건이나 공간 구조는 단정하지 말고, 필요한 경우 "사진 기준으로는"처럼 말하세요.
 - 새 가구 구매를 전제로 제안하지 마세요.
+- 질문 자체가 정리/배치 표현이 아니어도 사진이나 기존 추천 결과와 조금이라도 연결할 수 있는 의도가 있으면 공간 정리, 수납, 배치, 동선 관점으로 자연스럽게 답하세요.
+- 예를 들어 "우유 맛있다"처럼 물건이나 식재료가 언급되면 냉장고/수납 위치 관점으로, "옷 많다"처럼 물건이 언급되면 정리/수납 관점으로, "뭐가 별로야?"처럼 평가를 묻는 말이면 공간에서 개선할 부분 중심으로 답하세요.
+- 질문이 사진 속 공간이나 물건과도 연결하기 어려운 완전히 무관한 내용이면 "${unrelatedAnswer}"라고만 답하세요.
 - 답변은 2~5문장 정도로 간결하게 작성하세요.
 
 기존 추천 결과:
@@ -96,7 +102,10 @@ ${question}
       );
     }
 
-    return NextResponse.json({ answer });
+    return NextResponse.json({
+      answer,
+      isRelated: answer === unrelatedAnswer ? false : undefined,
+    });
   } catch (error) {
     const message =
       error instanceof Error

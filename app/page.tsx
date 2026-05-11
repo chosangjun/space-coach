@@ -18,6 +18,15 @@ const organizingDomains = [
   "수납 정리",
 ];
 
+const followUpQuestionExamples = {
+  fridge: "예: 냉장고 문 쪽에는 어떤 식재료를 두는 게 좋을까요?",
+  desk: "예: 책상 위 물건은 어떤 순서로 정리하면 좋을까요?",
+  room: "예: 침대와 책상 사이 동선을 더 편하게 만들려면 어떻게 할까요?",
+  suitcase: "예: 여행가방 아래쪽에는 어떤 짐을 먼저 넣으면 좋을까요?",
+  storage: "예: 자주 쓰는 물건과 계절 물건은 어떻게 나누면 좋을까요?",
+  default: "예: 이 공간에서 가장 먼저 정리할 위치는 어디일까요?",
+};
+
 export default function Home() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -46,6 +55,8 @@ export default function Home() {
     setIsAskingFollowUp(false);
     setHasAskedFollowUp(false);
   };
+
+  const followUpPlaceholder = getFollowUpQuestionPlaceholder(recommendations);
 
   const handleUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -149,6 +160,7 @@ export default function Home() {
       const payload = (await response.json()) as {
         answer?: string;
         error?: string;
+        isRelated?: boolean;
       };
 
       if (!response.ok || !payload.answer) {
@@ -156,7 +168,7 @@ export default function Home() {
       }
 
       setFollowUpAnswer(payload.answer);
-      setHasAskedFollowUp(true);
+      setHasAskedFollowUp(payload.isRelated !== false);
     } catch (error) {
       setFollowUpError(
         error instanceof Error
@@ -186,17 +198,17 @@ export default function Home() {
       "image/webp",
     ]);
 
-    if (!allowedTypes.has(uploadedFile.type)) {
-      setValidationStatus("invalid");
-      setValidationMessage(
-        "방, 냉장고, 여행가방, 책상 등 정리나 배치가 필요한 사진을 올려주세요.",
-      );
-      return;
-    }
-
     let isCancelled = false;
 
     const validateImage = async () => {
+      if (!allowedTypes.has(uploadedFile.type)) {
+        setValidationStatus("invalid");
+        setValidationMessage(
+          "방, 냉장고, 여행가방, 책상 등 정리나 배치가 필요한 사진을 올려주세요.",
+        );
+        return;
+      }
+
       setValidationStatus("checking");
       setValidationMessage("사진 유형을 확인하고 있습니다...");
 
@@ -434,7 +446,7 @@ export default function Home() {
                     onChange={(event) => setFollowUpQuestion(event.target.value)}
                     disabled={hasAskedFollowUp || isAskingFollowUp}
                     rows={3}
-                    placeholder="예: 책상 위 물건은 어떤 순서로 정리하면 좋을까요?"
+                    placeholder={followUpPlaceholder}
                     className="mt-3 w-full resize-none rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-100"
                   />
                   <button
@@ -533,6 +545,36 @@ export default function Home() {
       ) : null}
     </main>
   );
+}
+
+function getFollowUpQuestionPlaceholder(
+  recommendations: RecommendationItem[],
+): string {
+  const content = recommendations
+    .flatMap((item) => [item.title, item.location, item.reason, item.tip])
+    .join(" ");
+
+  if (content.includes("냉장고")) return followUpQuestionExamples.fridge;
+  if (content.includes("여행가방") || content.includes("캐리어")) {
+    return followUpQuestionExamples.suitcase;
+  }
+  if (content.includes("책상") || content.includes("데스크")) {
+    return followUpQuestionExamples.desk;
+  }
+  if (content.includes("방") || content.includes("원룸") || content.includes("침대")) {
+    return followUpQuestionExamples.room;
+  }
+  if (content.includes("수납") || content.includes("옷장")) {
+    return followUpQuestionExamples.storage;
+  }
+
+  const matchedDomain = organizingDomains.find((domain) =>
+    content.includes(domain.replace(" 정리", "")),
+  );
+
+  return matchedDomain
+    ? `예: ${matchedDomain}에서 가장 먼저 바꿀 위치는 어디일까요?`
+    : followUpQuestionExamples.default;
 }
 
 async function optimizeImageForApi(file: File): Promise<File> {
