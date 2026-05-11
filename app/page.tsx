@@ -204,9 +204,11 @@ export default function Home() {
         <section className="rounded-3xl bg-white p-5 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.35)] ring-1 ring-slate-200/80">
           <h2 className="text-base font-semibold">정리할 사진 업로드</h2>
           <p className="mt-1 text-sm text-slate-500">
-            냉장고, 여행가방, 방, 책상, 수납공간 사진을 올려주세요.
+            방, 냉장고, 여행가방, 책상 등 다양한 공간 사진을 올려주세요.
           </p>
-
+<p className="mt-2 text-xs leading-relaxed text-slate-400">
+  업로드한 사진은 AI 분석 후 저장되지 않으며, 추천 생성 용도로만 사용됩니다.
+</p>
           <label className="mt-4 flex cursor-pointer items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-sm font-medium text-slate-700 transition hover:border-emerald-400 hover:bg-emerald-50">
             정리할 사진 업로드
             <input
@@ -307,7 +309,7 @@ export default function Home() {
             </p>
           </div>
           <div className="mt-3 rounded-2xl border border-slate-200/90 bg-slate-50 p-3 text-xs text-slate-600">
-            {organizingDomains.join(" · ")}처럼 공간별 AI 배치 추천과 정리 팁을 받을 수 있습니다.
+            방, 냉장고, 여행가방, 책상, 수납공간 등 다양한 공간에 맞는 AI 정리 추천과 배치 팁을 받아보세요.
           </div>
         </section>
 
