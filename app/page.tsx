@@ -191,7 +191,7 @@ export default function Home() {
       <div className="mx-auto flex w-full max-w-md flex-col gap-5">
         <section className="rounded-3xl bg-white p-5 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.35)] ring-1 ring-slate-200/80">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600">
-            공간코치
+            정리와 배치 추천
           </p>
           <h1 className="mt-2 text-2xl font-bold leading-tight">
             공간코치
@@ -202,7 +202,7 @@ export default function Home() {
         </section>
 
         <section className="rounded-3xl bg-white p-5 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.35)] ring-1 ring-slate-200/80">
-          <h2 className="text-base font-semibold">정리할 사진 업로드</h2>
+          <h2 className="text-base font-semibold">공간 사진 업로드</h2>
           <p className="mt-1 text-sm text-slate-500">
             방, 냉장고, 여행가방, 책상 등 다양한 공간 사진을 올려주세요.
           </p>
@@ -210,7 +210,7 @@ export default function Home() {
   업로드한 사진은 AI 분석 후 저장되지 않으며, 추천 생성 용도로만 사용됩니다.
 </p>
           <label className="mt-4 flex cursor-pointer items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-sm font-medium text-slate-700 transition hover:border-emerald-400 hover:bg-emerald-50">
-            정리할 사진 업로드
+            공간 사진 업로드
             <input
               type="file"
               accept=".jpg,.jpeg,.png,.webp"
@@ -234,7 +234,7 @@ export default function Home() {
               </button>
             ) : (
               <div className="flex h-64 max-h-[62vh] items-center justify-center px-4 text-center text-sm text-slate-500">
-                아직 업로드된 이미지가 없습니다.
+                업로드된 이미지가 없습니다.
               </div>
             )}
           </div>
@@ -286,8 +286,7 @@ export default function Home() {
         </section>
 
         <section className="rounded-3xl bg-white p-5 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.35)] ring-1 ring-slate-200/80">
-          <h2 className="text-base font-semibold">AI 정리 코치 시작</h2>
-          <div className="mt-3 space-y-2">
+          <div className="space-y-2">
             <button
               type="button"
               onClick={() => setIsConfirmModalOpen(true)}
@@ -302,10 +301,10 @@ export default function Home() {
                 ? isOptimizing
                   ? "이미지 최적화 중..."
                   : "정리 추천 분석 중..."
-                : "정리 추천 시작하기"}
+                : "공간 분석 시작하기"}
             </button>
             <p className="text-xs text-slate-500">
-              AI 분석 시 크레딧이 사용됩니다.
+              분석 시 크레딧이 사용됩니다.
             </p>
           </div>
           <div className="mt-3 rounded-2xl border border-slate-200/90 bg-slate-50 p-3 text-xs text-slate-600">
@@ -314,7 +313,7 @@ export default function Home() {
         </section>
 
         <section className="rounded-3xl bg-white p-5 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.35)] ring-1 ring-slate-200/80">
-          <h2 className="text-base font-semibold">AI 추천 카드</h2>
+          <h2 className="text-base font-semibold">추천 결과</h2>
           <div className="mt-3 flex flex-col gap-3">
             {!previewUrl ? (
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
