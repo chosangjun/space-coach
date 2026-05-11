@@ -33,6 +33,19 @@ export default function Home() {
   const [validationStatus, setValidationStatus] =
     useState<ValidationStatus>("idle");
   const [validationMessage, setValidationMessage] = useState<string | null>(null);
+  const [followUpQuestion, setFollowUpQuestion] = useState("");
+  const [followUpAnswer, setFollowUpAnswer] = useState<string | null>(null);
+  const [followUpError, setFollowUpError] = useState<string | null>(null);
+  const [isAskingFollowUp, setIsAskingFollowUp] = useState(false);
+  const [hasAskedFollowUp, setHasAskedFollowUp] = useState(false);
+
+  const resetFollowUpState = () => {
+    setFollowUpQuestion("");
+    setFollowUpAnswer(null);
+    setFollowUpError(null);
+    setIsAskingFollowUp(false);
+    setHasAskedFollowUp(false);
+  };
 
   const handleUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -52,6 +65,7 @@ export default function Home() {
     setErrorMessage(null);
     setValidationStatus("idle");
     setValidationMessage(null);
+    resetFollowUpState();
   };
 
   const startAnalysis = async () => {
@@ -61,6 +75,7 @@ export default function Home() {
     setIsOptimizing(true);
     setErrorMessage(null);
     setRecommendations([]);
+    resetFollowUpState();
 
     try {
       const optimizedFile = await optimizeImageForApi(uploadedFile);
@@ -102,6 +117,55 @@ export default function Home() {
   const handleConfirmStart = async () => {
     setIsConfirmModalOpen(false);
     await startAnalysis();
+  };
+
+  const askFollowUpQuestion = async () => {
+    if (
+      !uploadedFile ||
+      recommendations.length === 0 ||
+      hasAskedFollowUp ||
+      isAskingFollowUp ||
+      !followUpQuestion.trim()
+    ) {
+      return;
+    }
+
+    setIsAskingFollowUp(true);
+    setFollowUpError(null);
+    setFollowUpAnswer(null);
+
+    try {
+      const optimizedFile = await optimizeImageForApi(uploadedFile);
+      const formData = new FormData();
+      formData.append("image", optimizedFile);
+      formData.append("question", followUpQuestion.trim());
+      formData.append("recommendations", JSON.stringify(recommendations));
+
+      const response = await fetch("/api/follow-up-question", {
+        method: "POST",
+        body: formData,
+      });
+
+      const payload = (await response.json()) as {
+        answer?: string;
+        error?: string;
+      };
+
+      if (!response.ok || !payload.answer) {
+        throw new Error(payload.error ?? "추가 질문 답변을 가져오지 못했습니다.");
+      }
+
+      setFollowUpAnswer(payload.answer);
+      setHasAskedFollowUp(true);
+    } catch (error) {
+      setFollowUpError(
+        error instanceof Error
+          ? error.message
+          : "추가 질문 처리 중 오류가 발생했습니다.",
+      );
+    } finally {
+      setIsAskingFollowUp(false);
+    }
   };
 
   useEffect(() => {
@@ -253,6 +317,7 @@ export default function Home() {
         setErrorMessage(null);
         setValidationStatus("idle");
         setValidationMessage(null);
+        resetFollowUpState();
       }}
       className="flex-1 rounded-xl bg-rose-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-400 active:scale-[0.98]"
     >
@@ -333,7 +398,8 @@ export default function Home() {
                 {errorMessage}
               </div>
             ) : recommendations.length > 0 ? (
-              recommendations.map((item, index) => (
+              <>
+                {recommendations.map((item, index) => (
                 <article
                   key={`${item.title}-${index}`}
                   className="rounded-xl border border-slate-200 bg-slate-50 p-4"
@@ -354,7 +420,56 @@ export default function Home() {
                     <span className="font-semibold">정리 팁:</span> {item.tip}
                   </p>
                 </article>
-              ))
+                ))}
+
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <h3 className="text-sm font-semibold text-slate-900">
+                    추가 질문
+                  </h3>
+                  <p className="mt-1 text-xs text-slate-500">
+                    이 추천 결과를 기준으로 공간 정리나 배치에 대해 한 번 더 물어볼 수 있습니다.
+                  </p>
+                  <textarea
+                    value={followUpQuestion}
+                    onChange={(event) => setFollowUpQuestion(event.target.value)}
+                    disabled={hasAskedFollowUp || isAskingFollowUp}
+                    rows={3}
+                    placeholder="예: 책상 위 물건은 어떤 순서로 정리하면 좋을까요?"
+                    className="mt-3 w-full resize-none rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-100"
+                  />
+                  <button
+                    type="button"
+                    onClick={askFollowUpQuestion}
+                    disabled={
+                      hasAskedFollowUp ||
+                      isAskingFollowUp ||
+                      !followUpQuestion.trim()
+                    }
+                    className="mt-2 w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:bg-slate-300"
+                  >
+                    {isAskingFollowUp ? "질문 중..." : "질문하기"}
+                  </button>
+                  {isAskingFollowUp ? (
+                    <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-emerald-500" />
+                      답변을 준비하고 있습니다.
+                    </div>
+                  ) : null}
+                  {followUpError ? (
+                    <p className="mt-3 text-xs text-rose-600">{followUpError}</p>
+                  ) : null}
+                  {followUpAnswer ? (
+                    <div className="mt-3 rounded-xl border border-emerald-100 bg-white p-3 text-sm leading-relaxed text-slate-700">
+                      {followUpAnswer}
+                    </div>
+                  ) : null}
+                  {hasAskedFollowUp ? (
+                    <p className="mt-3 text-xs text-slate-500">
+                      이 추천 결과에서는 추가 질문을 1회 사용했습니다.
+                    </p>
+                  ) : null}
+                </div>
+              </>
             ) : (
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
                 정리 추천 시작하기를 누르면 공간 분석 결과가 표시됩니다.
