@@ -166,7 +166,7 @@ export default function Home() {
         setValidationStatus("invalid");
         setValidationMessage(
           payload.reason ??
-            "냉장고, 여행가방, 책상, 수납공간처럼 정리나 배치가 필요한 사진을 올려주세요.",
+            "방, 냉장고, 여행가방, 책상 등 정리나 배치가 필요한 사진을 올려주세요.",
         );
       } catch (error) {
         if (isCancelled) return;
@@ -174,7 +174,7 @@ export default function Home() {
         setValidationMessage(
           error instanceof Error
             ? error.message
-            : "냉장고, 여행가방, 책상, 수납공간처럼 정리나 배치가 필요한 사진을 올려주세요.",
+            : "방, 냉장고, 여행가방, 책상 등 정리나 배치가 필요한 사진을 올려주세요.",
         );
       }
     };
