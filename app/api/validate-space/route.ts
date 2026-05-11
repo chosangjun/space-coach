@@ -70,7 +70,7 @@ Return exactly one line: ALLOW or BLOCK.
       return NextResponse.json({
         isValid: false,
         reason:
-          "냉장고, 여행가방, 책상, 수납공간처럼 정리나 배치가 필요한 사진을 올려주세요.",
+          "방, 냉장고, 여행가방, 책상 등 정리나 배치가 필요한 사진을 올려주세요.",
       });
     }
 
