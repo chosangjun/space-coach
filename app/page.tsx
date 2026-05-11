@@ -292,8 +292,7 @@ export default function Home() {
               disabled={
                 !uploadedFile ||
                 isAnalyzing ||
-                validationStatus !== "valid" ||
-                validationStatus === "checking"
+                validationStatus !== "valid"
               }
               className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:bg-slate-300"
             >
