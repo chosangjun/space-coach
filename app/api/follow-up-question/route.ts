@@ -13,7 +13,7 @@ const client = new OpenAI({
 });
 
 const unrelatedAnswer =
-  "이 사진 기준으로는 정리나 배치 관련 질문을 해주시면 더 정확히 도와드릴 수 있어요.";
+  "사진 속 반려동물과 관련된 질문을 입력해 주세요.";
 
 export async function POST(request: Request) {
   if (!process.env.OPENAI_API_KEY) {

@@ -491,6 +491,10 @@ export default function Home() {
         </section>
       </div>
 
+      <footer className="mx-auto mt-6 w-full max-w-md pb-1 text-center text-[11px] text-slate-400">
+        Created by Sangjun
+      </footer>
+
       {modalImageUrl ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/85 p-4">
           <div className="w-full max-w-3xl rounded-2xl bg-slate-950 p-3">
